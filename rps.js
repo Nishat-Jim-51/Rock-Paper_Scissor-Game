@@ -37,28 +37,48 @@ class GameRules {
     }
 }
 
-// Class to display the help table
+// Class to display the help table with lines
 class HelpTable {
     static generateHelpTable(moves) {
-        const header = ["Moves", ...moves];
-        const table = [];
+        const totalMoves = moves.length;
 
-        moves.forEach((move1, i) => {
-            const row = [move1];
-            moves.forEach((move2, j) => {
-                if (i === j) {
-                    row.push("Draw");
-                } else if ((j - i + moves.length) % moves.length <= Math.floor(moves.length / 2)) {
-                    row.push("Win");
-                } else {
-                    row.push("Lose");
-                }
-            });
-            table.push(row);
+        console.log("This table shows the outcomes from the user's point of view.");
+        console.log("Example: Win means the user wins, Lose means the computer wins, Draw means it's a tie.");
+
+        // Generate header
+        let header = "+-------------";
+        moves.forEach(() => {
+            header += "+-------";
         });
+        header += "+";
+        console.log(header);
 
-        console.log("\n" + header.join('\t'));
-        table.forEach(row => console.log(row.join('\t')));
+        // Header row
+        let headerRow = "| v PC\\User > ";
+        moves.forEach(move => {
+            headerRow += `| ${move.padEnd(6)} `;
+        });
+        headerRow += "|";
+        console.log(headerRow);
+
+        console.log(header);
+
+        // Generate table body
+        for (let i = 0; i < totalMoves; i++) {
+            let row = `| ${moves[i].padEnd(12)} `;
+            for (let j = 0; j < totalMoves; j++) {
+                if (i === j) {
+                    row += `| Draw  `;
+                } else if ((j - i + totalMoves) % totalMoves <= Math.floor(totalMoves / 2)) {
+                    row += `| Win   `;
+                } else {
+                    row += `| Lose  `;
+                }
+            }
+            row += "|";
+            console.log(row);
+            console.log(header); // Line between rows
+        }
     }
 }
 
@@ -78,7 +98,6 @@ function validateMoves(moves) {
 async function gameFlow(moves) {
     validateMoves(moves);
 
-    // Corrected usage of KeyGenerator class
     const key = KeyGenerator.generateKey();
     const computerMove = moves[Math.floor(Math.random() * moves.length)];
     const hmac = HMACGenerator.generateHMAC(key, computerMove);
